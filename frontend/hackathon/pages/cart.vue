@@ -1,3 +1,93 @@
+<template>
+  <v-app>
+    <v-container fluid class="fill-height d-flex flex-column">
+      <v-toolbar color="transparent">
+        <v-toolbar-title style="font-weight: 800;"> My Cart </v-toolbar-title>
+        <v-text-field
+          v-model="search"
+          prepend-inner-icon="mdi-magnify"
+          density="compact"
+          label="search"
+          variant="outlined"
+          rounded
+          hide-details
+          single-line
+        />
+      </v-toolbar>
+
+      <v-row dense>
+        <v-col
+          cols="12"
+          md="12"
+          sm="6"
+          v-for="item in filteredItems"
+          :key="item.title"
+        >
+          <item-card :item="item" @click="openDialog(item)" />
+        </v-col>
+      </v-row>
+
+      <v-spacer></v-spacer> <!-- Pushes the footer to the bottom -->
+
+      <v-dialog v-model="dialog" max-width="30rem" elevation="">
+        <v-card>
+          <v-card-title>{{ selectedItem.title }}</v-card-title>
+          <v-card-subtitle>{{ selectedItem.author }}</v-card-subtitle>
+          <v-card-text>
+            <v-img
+              :src="selectedItem.cover_image"
+              cover
+              :aspect-ratio="1 / 1"
+              class="mb-3"
+            ></v-img>
+            <span style="font-weight: 800; font-size: 24px">PRODUCT DETAILS</span><br><br>
+            <span>Description</span><br>
+            {{ selectedItem.description }}
+          </v-card-text>
+          <v-divider/>
+          <v-card-actions>
+            <v-spacer/>
+            <v-btn color="primary" @click="handleCheckout">Checkout</v-btn>
+            <v-btn color="red" @click="handleDelete">Delete</v-btn>
+            <v-spacer/>
+          </v-card-actions>
+        </v-card>
+      </v-dialog>
+    </v-container>
+
+    <v-footer class="text-center d-flex flex-column" color="black">
+      <div>
+        <v-btn
+          v-for="icon in icons"
+          :key="icon"
+          :icon="icon"
+          class="mx-4"
+          variant="text"
+        ></v-btn>
+      </div>
+
+      <div class="pt-0">
+        Group 4
+      </div>
+      <span>Someone</span><span>Someone</span>
+
+      <v-divider></v-divider>
+
+      <div>
+        {{ new Date().getFullYear() }} — <strong>Vuetify</strong>
+      </div>
+    </v-footer>
+
+    <!-- Snackbar -->
+    <v-snackbar v-model="snackbar.show" :color="snackbar.color" timeout="3000">
+      {{ snackbar.message }}
+      <v-btn text @click="snackbar.show = false">
+        Close
+      </v-btn>
+    </v-snackbar>
+  </v-app>
+</template>
+
 <script>
 export default {
   data: () => ({
@@ -12,6 +102,7 @@ export default {
     search: "",
     dialog: false,
     selectedItem: null,
+    icons: ["mdi-facebook", "mdi-twitter", "mdi-instagram"],
     snackbar: {
       show: false,
       message: '',
@@ -20,13 +111,11 @@ export default {
   }),
   computed: {
     filteredItems() {
-      return this.items.filter((item) => {
-        const searchText = this.search.toLowerCase();
-        return (
-          item.title.toLowerCase().includes(searchText) ||
-          item.author.toLowerCase().includes(searchText)
-        );
-      });
+      const searchText = this.search.toLowerCase();
+      return this.items.filter((item) =>
+        item.title.toLowerCase().includes(searchText) ||
+        item.author.toLowerCase().includes(searchText)
+      );
     },
   },
   methods: {
@@ -50,106 +139,13 @@ export default {
   }
 };
 </script>
-<template>
-    <v-app>
-      <v-container fill-height>
-        <v-row
-          class="fill-height"
-          align="center"
-          justify="center"
-          no-gutters
-        >
-          <v-col
-            cols="12"
-            class="d-flex flex-column fill-height"
-          >
-            <v-toolbar color="transparent">
-              <v-toolbar-title style="font-weight: 800;"> My Cart </v-toolbar-title>
-              <v-text-field
-                v-model="search"
-                prepend-inner-icon="mdi-magnify"
-                density="compact"
-                label="search"
-                variant="outlined"
-                rounded
-                hide-details
-                single-line
-              />
-            </v-toolbar>
-            <v-row dense>
-              <v-col
-                cols="12"
-                md="12"
-                sm="6"
-                v-for="item in filteredItems"
-                :key="item.title"
-              >
-                <item-card :item="item" @click="openDialog(item)" />
-              </v-col>
-            </v-row>
-            <v-dialog v-model="dialog" max-width="30rem" elevation="">
-              <v-card>
-                <v-card-title>{{ selectedItem.title }}</v-card-title>
-                <v-card-subtitle>{{ selectedItem.author }}</v-card-subtitle>
-                <v-card-text>
-                  <v-img
-                    :src="selectedItem.cover_image"
-                    cover
-                    :aspect-ratio="1 / 1"
-                    class="mb-3"
-                  ></v-img>
-                  <span style="font-weight: 800; font-size: 24px">PRODUCT DETAILS</span><br><br>
-                  <span>Description</span><br>
-                  {{ selectedItem.description }}
-                </v-card-text>
-                <v-divider/>
-                <v-card-actions>
-                  <v-spacer/>
-                  <v-btn color="primary" @click="handleCheckout">Checkout</v-btn>
-                  <v-btn color="red" @click="handleDelete">Delete</v-btn>
-                  <v-spacer/>
-                </v-card-actions>
-              </v-card>
-            </v-dialog>
-          </v-col>
-        </v-row>
-      </v-container>
-      <v-footer
-        class="text-center d-flex flex-column" color="black"
-        app
-      >
-        <div>
-          <v-btn
-            v-for="icon in icons"
-            :key="icon"
-            :icon="icon"
-            class="mx-4"
-            variant="text"
-          ></v-btn>
-        </div>
-  
-        <div class="pt-0">
-          Group 4
-        </div>
-        <span>Someone</span><span>Someone</span>
-  
-        <v-divider></v-divider>
-  
-        <div>
-          {{ new Date().getFullYear() }} — <strong>Vuetify</strong>
-        </div>
-      </v-footer>
-  
-      <!-- Snackbar -->
-      <v-snackbar v-model="snackbar.show" :color="snackbar.color" timeout="3000">
-        {{ snackbar.message }}
-        <v-btn
-          text
-          @click="snackbar.show = false"
-        >
-          Close
-        </v-btn>
-      </v-snackbar>
-    </v-app>
-  </template>
-  
+
+<style>
+.fill-height {
+  min-height: 100vh;
+}
+
+.v-toolbar {
+  margin-bottom: 20px;
+}
+</style>

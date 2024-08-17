@@ -1,3 +1,40 @@
+<template>
+  <v-app>
+    <v-container fluid class="fill-height d-flex flex-column">
+      <v-toolbar color="transparent">
+        <v-toolbar-title style="font-weight: 800;"> Profile </v-toolbar-title>
+      </v-toolbar>
+      
+      <!-- Your content here -->
+
+      <v-spacer></v-spacer> <!-- This will push the footer to the bottom -->
+    </v-container>
+
+    <v-footer class="text-center d-flex flex-column" color="black">
+      <div>
+        <v-btn
+          v-for="icon in icons"
+          :key="icon"
+          :icon="icon"
+          class="mx-4"
+          variant="text"
+        ></v-btn>
+      </div>
+
+      <div class="pt-0">
+        Group 4
+      </div>
+      <span>Someone</span><span>Someone</span>
+
+      <v-divider></v-divider>
+
+      <div>
+        {{ new Date().getFullYear() }} — <strong>Vuetify</strong>
+      </div>
+    </v-footer>
+  </v-app>
+</template>
+
 <script>
 export default {
   data: () => ({
@@ -12,6 +49,7 @@ export default {
     search: "",
     dialog: false,
     selectedItem: null,
+    icons: ["mdi-facebook", "mdi-twitter", "mdi-instagram"],
   }),
   computed: {
     filteredItems() {
@@ -33,40 +71,8 @@ export default {
 };
 </script>
 
-<template>
-  <v-app>
-    <v-container fill-height fluid class="d-flex flex-column">
-      <!-- Main Content -->
-      <v-main class="flex-grow-1">
-        <!-- Your content goes here -->
-      </v-main>
-      
-      <!-- Footer -->
-      <v-footer
-        class="text-center d-flex flex-column" color="black"
-        app
-      >
-        <div>
-          <v-btn
-            v-for="icon in icons"
-            :key="icon"
-            :icon="icon"
-            class="mx-4"
-            variant="text"
-          ></v-btn>
-        </div>
-
-        <div class="pt-0">
-          Group 4
-        </div>
-        <span>Someone</span><span>Someone</span>
-
-        <v-divider></v-divider>
-
-        <div>
-          {{ new Date().getFullYear() }} — <strong>Vuetify</strong>
-        </div>
-      </v-footer>
-    </v-container>
-  </v-app>
-</template>
+<style>
+.fill-height {
+  min-height: 100vh;
+}
+</style>

@@ -24,6 +24,21 @@ export default {
         icon: "mdi-lipstick",
         to: "/lipstick",
       },
+      {
+        title: "Cart",
+        icon: "mdi-cart",
+        to: "/cart",
+      },
+      {
+        title: "Scan",
+        icon: "mdi-face-recognition",
+        to: "/scan",
+      },
+      {
+        title: "Profile",
+        icon: "mdi-account",
+        to: "/profile",
+      },
     ],
   }),
   methods: {
@@ -36,7 +51,7 @@ export default {
 </script>
 <template>
   <v-app>
-    <v-navigation-drawer v-model="drawer" permanent color="black">
+    <v-navigation-drawer v-model="drawer" permanent color="#7B5ECD">
       <v-list density="compact" nav>
         <v-list-item v-for="item in items" :key="item.title" @click="navigateTo(item.to)" :prepend-icon="item.icon"
           :title="item.title" />
@@ -47,7 +62,7 @@ export default {
         @click.stop="drawer = !drawer"></v-app-bar-nav-icon>
       <v-app-bar-title>{{ name }}</v-app-bar-title>
       <v-spacer></v-spacer>
-      <v-btn icon @click="navigateTo('/cart')">
+      <!-- <v-btn icon @click="navigateTo('/cart')">
         <v-icon>mdi-cart</v-icon>
       </v-btn>
 
@@ -57,7 +72,7 @@ export default {
 
       <v-btn icon @click="navigateTo('/profile')">
         <v-icon>mdi-account</v-icon>
-      </v-btn>
+      </v-btn> -->
     </v-app-bar>
     <v-main>
       <slot></slot>
