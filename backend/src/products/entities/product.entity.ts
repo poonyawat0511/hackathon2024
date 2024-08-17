@@ -13,6 +13,8 @@ export class ProductEntity extends MongoEntity {
 
   readonly rating: string;
 
+  readonly type: string;
+
   constructor(partial: Partial<ProductEntity>) {
     super();
     Object.assign(this, partial);

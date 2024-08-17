@@ -1,127 +1,104 @@
-<script lang="ts">
-export default {
-  data: () => ({
-    items: [
-      {
-        title: "Skintific Niacinamide Bright Boost Clay Mask Stick 40 g.",
-        author: "228.0 Bahts",
-        description: "SKINTIFIC Niacinamide Bright Boost Clay Stick Mud Mask in the form of sticks that help to improve skin clarity with ingredients like Niacinamide, Himalayan salt and tranexamic acid to help improve skin clarity and evenness. In combination with products that brighten and restore evenness to the skin.",
-        cover_image: "https://cdn.vuetifyjs.com/images/cards/sunshine.jpg",
-      },
-      {
-        title: "Title 2",
-        author: "author 2",
-        description: "Description 2",
-        cover_image: "https://cdn.vuetifyjs.com/images/cards/sunshine.jpg",
-      },
-      {
-        title: "Title 3",
-        author: "author 3",
-        description: "Description 3",
-        cover_image: "https://cdn.vuetifyjs.com/images/cards/sunshine.jpg",
-      },
-      {
-        title: "Title 4",
-        author: "author 4",
-        description: "Description 4",
-        cover_image: "https://cdn.vuetifyjs.com/images/cards/sunshine.jpg",
-      },
-    ],
-    search: "",
-    dialog: false,
-    selectedItem: null,
-  }),
-  computed: {
-    filteredItems() {
-      return this.items.filter((item) => {
-        const searchText = this.search.toLowerCase();
-        return (
-          item.title.toLowerCase().includes(searchText) ||
-          item.author.toLowerCase().includes(searchText)
-        );
-      });
-    },
-  },
-  methods: {
-    openDialog(item) {
-      this.selectedItem = item;
-      this.dialog = true;
-    },
-  },
-};
-</script>
 <template>
-  <v-container>
-    <v-toolbar color="transparent">
-      <v-toolbar-title style="font-weight: 800;"> Recommended </v-toolbar-title>
-      <v-text-field
-        v-model="search"
-        prepend-inner-icon="mdi-magnify"
-        density="compact"
-        label="search"
-        variant="outlined"
-        rounded
-        hide-details
-        single-line
-      />
-    </v-toolbar>
-    <v-row dense>
-      <v-col
-        cols="12"
-        md="4"
-        sm="6"
-        v-for="item in filteredItems"
-        :key="item.title"
-      >
-        <item-card :item="item" @click="openDialog(item)" />
-      </v-col>
-    </v-row>
-    <v-dialog v-model="dialog" max-width="30rem" elevation="">
-    <v-card>
-      <v-card-title>{{ selectedItem.title }}</v-card-title>
-      <v-card-subtitle>{{ selectedItem.author }}</v-card-subtitle>
-      <v-card-text>
-        <v-img
-          :src="selectedItem.cover_image"
-          cover
-          :aspect-ratio="1 / 1"
-          class="mb-3"
-        ></v-img>
-        <span style="font-weight: 800; font-size: 24px">PRODUCT DETAILS</span><br><br>
-        <span >Description</span><br>
-        {{ selectedItem.description }}
-      </v-card-text>
-      <v-divider/>
-      <v-card-actions>
-        <v-spacer/>
-        <v-btn color="primary" @click="dialog = false">Add to cart</v-btn>
-        <v-spacer/>
-      </v-card-actions>
-    </v-card>
-  </v-dialog>
-  </v-container>
-  <v-footer
-    class="text-center d-flex flex-column" color="black"
-  >
-    <div>
-      <v-btn
-        v-for="icon in icons"
-        :key="icon"
-        :icon="icon"
-        class="mx-4"
-        variant="text"
-      ></v-btn>
-    </div>
-
-    <div class="pt-0">
-      Group 4
-    </div>
-    <span>Someone</span><span>Someone</span>
-
-    <v-divider></v-divider>
-
-    <div>
-      {{ new Date().getFullYear() }} — <strong>Vuetify</strong>
-    </div>
-  </v-footer>
-</template>
+    <v-container>
+      <v-toolbar color="transparent">
+        <v-toolbar-title style="font-weight: 800"> Recommended </v-toolbar-title>
+        <!-- Search functionality can be added here -->
+      </v-toolbar>
+      <v-row dense>
+        <v-col
+          cols="12"
+          md="3"
+          sm="6"
+          v-for="item in filteredItems"
+          :key="item.id"
+        >
+          <item-card :item="item">
+            <template #actions>
+              <v-btn @click="addToCart(item)">Add Cart</v-btn>
+              <v-btn @click="openDialog(item)">See More</v-btn>
+            </template>
+          </item-card>
+        </v-col>
+      </v-row>
+      <div class="text-center">
+        <v-btn variant="text">See more products</v-btn>
+      </div>
+      <!-- dialog -->
+      <v-dialog v-model="dialog" max-width="30rem" elevation="">
+        <v-card>
+          <v-card-title>{{ selectedItem.name }}</v-card-title>
+          <v-card-subtitle>{{ selectedItem.rating }}</v-card-subtitle>
+          <v-card-text>
+            <v-img
+              :src="selectedItem.productImage"
+              cover
+              :aspect-ratio="1 / 1"
+              class="mb-3"
+            ></v-img>
+            <span style="font-weight: 800; font-size: 24px">PRODUCT DETAILS</span><br /><br />
+            <span>Description</span><br />
+            {{ selectedItem.description }}
+          </v-card-text>
+          <v-divider />
+          <v-card-actions>
+            <v-spacer />
+            <v-btn color="primary" @click="addToCart(selectedItem)">Add to cart</v-btn>
+            <v-spacer />
+          </v-card-actions>
+        </v-card>
+      </v-dialog>
+    </v-container>
+  </template>
+  
+  <script>
+  export default {
+    data() {
+      return {
+        items: [],
+        search: "",
+        dialog: false,
+        selectedItem: null,
+        cart: [], // Array to hold items added to the cart
+      };
+    },
+    computed: {
+      filteredItems() {
+        const searchText = this.search.toLowerCase();
+        return this.items.filter(
+          (item) =>
+            item.name.toLowerCase().includes(searchText) ||
+            item.description.toLowerCase().includes(searchText)
+        );
+      },
+    },
+    methods: {
+      async fetchProducts() {
+        try {
+          const response = await fetch("http://localhost:8080/api/products/");
+          if (!response.ok) {
+            throw new Error("Network response was not ok");
+          }
+          const data = await response.json();
+          this.items = data.data;
+        } catch (error) {
+          console.error("Error fetching products:", error);
+        }
+      },
+      openDialog(item) {
+        this.selectedItem = item;
+        this.dialog = true;
+      },
+      addToCart(item) {
+        if (!this.cart.find(cartItem => cartItem.id === item.id)) {
+          this.cart.push(item);
+          console.log("Item added to cart:", item);
+        } else {
+          console.log("Item is already in the cart");
+        }
+      },
+    },
+    created() {
+      this.fetchProducts();
+    },
+  };
+  </script>

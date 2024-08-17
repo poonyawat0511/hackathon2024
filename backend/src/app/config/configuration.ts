@@ -7,7 +7,7 @@ export default () => ({
   },
   mongodb: {
     uri: process.env.MONGO_URI || 'mongodb://127.0.0.1:27017',
-    dbName: process.env.DATABASE_NAME || 'hllc-dev',
+    dbName: process.env.DATABASE_NAME || 'Hackathon',
   },
   accessToken: {
     secret: process.env.ACCESS_TOKEN_SECRET || 'secret',
@@ -15,7 +15,7 @@ export default () => ({
   },
   refreshToken: {
     secret: process.env.REFRESH_TOKEN_SECRET || 'secret',
-    expiresIn: process.env.REFRESH_TOKEN_EXPIRES || '7d',
+    expiresIn: process.env.REFRESH_TOKEN_EXPIRES || '3d',
   },
   bcrypt: {
     saltOrRounds: Number(process.env.BCRYPT_SALT_OR_ROUNDS) || 10,
