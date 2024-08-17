@@ -1,4 +1,4 @@
-<script lang="ts">
+<script>
 export default {
   data: () => ({
     items: [
@@ -6,24 +6,6 @@ export default {
         title: "Skintific Niacinamide Bright Boost Clay Mask Stick 40 g.",
         author: "228.0 Bahts",
         description: "SKINTIFIC Niacinamide Bright Boost Clay Stick Mud Mask in the form of sticks that help to improve skin clarity with ingredients like Niacinamide, Himalayan salt and tranexamic acid to help improve skin clarity and evenness. In combination with products that brighten and restore evenness to the skin.",
-        cover_image: "https://cdn.vuetifyjs.com/images/cards/sunshine.jpg",
-      },
-      {
-        title: "Title 2",
-        author: "author 2",
-        description: "Description 2",
-        cover_image: "https://cdn.vuetifyjs.com/images/cards/sunshine.jpg",
-      },
-      {
-        title: "Title 3",
-        author: "author 3",
-        description: "Description 3",
-        cover_image: "https://cdn.vuetifyjs.com/images/cards/sunshine.jpg",
-      },
-      {
-        title: "Title 4",
-        author: "author 4",
-        description: "Description 4",
         cover_image: "https://cdn.vuetifyjs.com/images/cards/sunshine.jpg",
       },
     ],
@@ -53,7 +35,7 @@ export default {
 <template>
   <v-container>
     <v-toolbar color="transparent">
-      <v-toolbar-title style="font-weight: 800;"> Recommended </v-toolbar-title>
+      <v-toolbar-title style="font-weight: 800;"> Lipstick </v-toolbar-title>
       <v-text-field
         v-model="search"
         prepend-inner-icon="mdi-magnify"
