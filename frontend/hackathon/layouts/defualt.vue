@@ -39,6 +39,11 @@ export default {
         icon: "mdi-account",
         to: "/profile",
       },
+      {
+        title: "ItemDetail",
+        icon: "mdi-account",
+        to: "/itemDetail",
+      },
     ],
   }),
   methods: {
