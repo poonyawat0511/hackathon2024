@@ -1,6 +1,8 @@
 import { IsNotEmpty, IsString } from 'class-validator';
 
 export class CreateProductDto {
+  readonly productImage: string;
+
   @IsNotEmpty()
   @IsString()
   readonly name: string;
@@ -13,9 +15,13 @@ export class CreateProductDto {
   @IsString()
   readonly price: string;
 
-  readonly productImage: string;
+
 
   @IsNotEmpty()
   @IsString()
   readonly rating: string;
+
+  @IsNotEmpty()
+  @IsString()
+  readonly type: string;
 }

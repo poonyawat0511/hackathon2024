@@ -6,8 +6,8 @@ import { User } from 'src/users/schemas/user.schema';
 import { TransformUrl } from 'src/app/decorator/transform-url.decorator';
 
 export class ArticleEntity extends MongoEntity {
-  @TransformId((value) => new UserEntity(value))
-  user?: Types.ObjectId | User | null;
+
+  user: string
 
   name: string;
 
@@ -16,7 +16,7 @@ export class ArticleEntity extends MongoEntity {
   @TransformUrl({ type: 'string' })
   articleImage: string;
 
-  like: string;
+  like: number;
 
   constructor(partial: Partial<ArticleEntity>) {
     super();

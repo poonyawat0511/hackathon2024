@@ -1,7 +1,7 @@
 <template>
   <v-container>
     <v-toolbar color="transparent">
-      <v-toolbar-title style="font-weight: 800"> Recommended </v-toolbar-title>
+      <v-toolbar-title style="font-weight: 800"> All Product </v-toolbar-title>
       <!-- Search functionality can be added here -->
     </v-toolbar>
     <v-row dense>
@@ -50,18 +50,6 @@
         </v-card-actions>
       </v-card>
     </v-dialog>
-    <!-- Article -->
-    <v-row dense>
-      <v-col
-        cols="12"
-        md="3"
-        sm="6"
-        v-for="article in filteredItems"
-        :key="article.id"
-      >
-        <ArticleCard :article="article"> </ArticleCard>
-      </v-col>
-    </v-row>
   </v-container>
 </template>
 
@@ -69,7 +57,6 @@
 export default {
   data() {
     return {
-      article: [],
       items: [],
       search: "",
       dialog: false,
@@ -100,19 +87,6 @@ export default {
         console.error("Error fetching products:", error);
       }
     },
-
-    async fetchArticle() {
-      try {
-        const response = await fetch("http://localhost:8080/api/articles/");
-        if (!response.ok) {
-          throw new Error("Network response was not ok");
-        }
-        const data = await response.json();
-        this.items = data.data;
-      } catch (error) {
-        console.error("Error fetching products:", error);
-      }
-    },
     openDialog(item) {
       this.selectedItem = item;
       this.dialog = true;
@@ -128,7 +102,6 @@ export default {
   },
   created() {
     this.fetchProducts();
-    this.fetchArticle();
   },
 };
 </script>
