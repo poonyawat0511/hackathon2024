@@ -1,218 +1,154 @@
-<script>
-import {
-    getPeople,
-    createPerson,
-    updatePerson,
-    deletePerson,
-} from "../services/people";
-export default {
-    data: () => ({
-    dialog: false,
-    dialogDelete: false,
-    headers: [
-      {
-        title: "ID",
-        align: "start",
-        sortable: false,
-        key: "id",
-      },
-      { title: "Name", key: "name", align: "start" },
-      { title: "Job", key: "job", align: "start" },
-      { title: "Description", key: "description", align: "start" },
-      { title: "Actions", key: "actions", sortable: false },
-    ],
-    search: "",
-    people: [],
-    person: {},
-    loading: true,
-    totalPeople: 0,
-    editedIndex: -1,
-    defaultPerson: {
-      name: "",
-      job: "",
-      description: "",
-      profile: "",
-    },
-  }),
-  watch: {
-  dialog(val) {
-    val || this.close();
-  },
-  dialogDelete(val) {
-    val || this.closeDelete();
-  },
-},
-computed: {
-  formTitle() {
-    return this.editedIndex === -1 ? "New Person" : "Update Person";
-  },
-},
+<template>
+  <v-container>
+    <h1>News Articles</h1>
 
-methods: {
-    loadPeople (){
-      this.loading = true
-      getPeople().then((result) => {
-        this.people = result;
-        this.totalPeople = this.people.length;
-        this.loading = false;
-      });
-    },
-    create() {
-      const data = this.person;
-      console.log(this.person)
-      createPerson(data).then(() => {
-        this.loadPeople();
-      });
-    },
-    update() {
-      const data = this.person;
-      updatePerson(data).then(() => {
-        this.loadPeople();
-      });
-    },
+    <!-- Button to create a new article -->
+    <v-btn color="primary" @click="openCreateDialog">Create New Article</v-btn>
 
-    delete() {
-      const data = this.person;
-      deletePerson(data).then(() => {
-        this.loadPeople();
-      });
-    },
-    editPerson(person) {
-      this.editedIndex = this.people.indexOf(person);
-      this.person = Object.assign({}, person);
-      this.dialog = true;
-    },
-    deletePerson(person) {
-      this.editedIndex = this.people.indexOf(person);
-      this.person = Object.assign({}, person);
-      this.dialogDelete = true;
-    },
-    deletePersonConfirm() {
-      this.delete();
-      this.closeDelete();
-    },
+    <v-row>
+      <v-col v-for="article in articles" :key="article.id" cols="12" md="4">
+        <v-card>
+          <v-img
+            :src="article.articleImage"
+            height="200px"
+            alt="Article Image"
+          ></v-img>
+          <v-card-title>{{ article.name }}</v-card-title>
+          <v-card-subtitle>Likes: {{ article.like }}</v-card-subtitle>
+          <v-card-text>{{ article.detail }}</v-card-text>
+          <v-card-actions>
+            <v-btn color="warning" @click="openEditDialog(article)">Edit</v-btn>
+            <v-btn color="error" @click="deleteArticle(article.id)"
+              >Delete</v-btn
+            >
+          </v-card-actions>
+        </v-card>
+      </v-col>
+    </v-row>
 
-    close() {
-      this.dialog = false;
-      this.$nextTick(() => {
-        this.person = Object.assign({}, this.defaultPerson);
-        this.editedIndex = -1;
-      });
-    },
+    <!-- Create/Edit Article Dialog -->
+    <v-dialog v-model="dialog" max-width="600px">
+      <v-card>
+        <v-card-title>
+          <span v-if="isEditMode">Edit Article</span>
+          <span v-else>Create New Article</span>
+        </v-card-title>
+        <v-card-text>
+          <v-form>
+            <!-- User Field for Manual Entry -->
+            <v-text-field
+              v-model="form.user"
+              label="User"
+              required
+            ></v-text-field>
+            <v-text-field
+              v-model="form.name"
+              label="Title"
+              required
+            ></v-text-field>
+            <v-text-field
+              v-model="form.detail"
+              label="Detail"
+              required
+            ></v-text-field>
+            <v-file-input
+              v-model="form.articleImage"
+              label="Article Image"
+              accept="image/*"
+            ></v-file-input>
+          </v-form>
+        </v-card-text>
+        <v-card-actions>
+          <v-spacer></v-spacer>
+          <v-btn color="primary" @click="saveArticle">Save</v-btn>
+          <v-btn color="secondary" @click="closeDialog">Cancel</v-btn>
+        </v-card-actions>
+      </v-card>
+    </v-dialog>
+  </v-container>
+</template>
 
-    closeDelete() {
-      this.dialogDelete = false;
-      this.$nextTick(() => {
-        this.person = Object.assign({}, this.defaultPerson);
-        this.editedIndex = -1;
-      });
-    },
+<script setup>
+import { ref, onMounted } from "vue";
+import axios from "axios";
 
-    save() {
-      if (this.editedIndex > -1) {
-        this.update();
-      } else {
-        this.create();
-      }
-      this.close();
+const articles = ref([]);
+const dialog = ref(false);
+const isEditMode = ref(false);
+const form = ref({
+  id: "",
+  user: "",
+  name: "",
+  detail: "",
+  articleImage: null,
+});
+
+const fetchArticles = async () => {
+  try {
+    const response = await axios.get("http://localhost:8080/api/articles/");
+    articles.value = response.data.data;
+  } catch (error) {
+    console.error("Error fetching articles:", error);
+  }
+};
+
+const openCreateDialog = () => {
+  isEditMode.value = false;
+  form.value = { id: "", user: "", name: "", detail: "", articleImage: null };
+  dialog.value = true;
+};
+
+const openEditDialog = (article) => {
+  isEditMode.value = true;
+  form.value = { ...article, articleImage: null };
+  dialog.value = true;
+};
+
+const closeDialog = () => {
+  dialog.value = false;
+};
+
+const saveArticle = async () => {
+  const formData = new FormData();
+  formData.append("user", form.value.user);
+  formData.append("name", form.value.name);
+  formData.append("detail", form.value.detail);
+  if (form.value.articleImage) {
+    formData.append("articleImage", form.value.articleImage);
+  }
+
+  try {
+    if (isEditMode.value) {
+      await axios.patch(
+        `http://localhost:8080/api/articles/${form.value.id}`,
+        formData
+      );
+    } else {
+      await axios.post("http://localhost:8080/api/articles/", formData);
     }
-}
-}
+    fetchArticles();
+    closeDialog();
+  } catch (error) {
+    console.error("Error saving article:", error);
+  }
+};
 
+const deleteArticle = async (id) => {
+  try {
+    await axios.delete(`http://localhost:8080/api/articles/${id}`);
+    fetchArticles();
+  } catch (error) {
+    console.error("Error deleting article:", error);
+  }
+};
 
+onMounted(() => {
+  fetchArticles();
+});
 </script>
 
-<template>
-    <v-container fluid>
-      <v-card class="border" variant="flat" rounded="l">
-      <v-card-title class="d-flex">
-        MY CRUD
-        <v-spacer />
-        <v-dialog v-model="dialog" max-width="500px">
-          <template v-slot:activator="{ props }">
-            <v-btn class="mb-2" color="primary" dark v-bind="props">
-               New Person
-             </v-btn>
-           
-          </template>
-          <v-card>
-            <v-card-title>
-              <span class="text-h5">{{ formTitle }}</span>
-            </v-card-title>
-            <v-card-text>
-              <v-container>
-                <v-row>
-                  <v-col cols="12" md="4" sm="6">
-                    <v-text-field
-                      v-model="person.name"
-                      label="Name"
-                    ></v-text-field>
-                  </v-col>
-                  <v-col cols="12" md="4" sm="6">
-                    <v-text-field
-                      v-model="person.job"
-                      label="Job"
-                    ></v-text-field>
-                  </v-col>
-                  <v-col cols="12" md="4" sm="6">
-                    <v-text-field
-                      v-model="person.description"
-                      label="Description"
-                    ></v-text-field>
-                  </v-col>
-                </v-row>
-              </v-container>
-            </v-card-text>
-
-            <v-card-actions>
-              <v-spacer></v-spacer>
-              <v-btn color="blue-darken-1" variant="text" @click="close">
-                Cancel
-              </v-btn>
-              <v-btn color="blue-darken-1" variant="text" @click="save">
-                Save
-              </v-btn>
-            </v-card-actions>
-          </v-card>
-        </v-dialog>
-        <v-dialog v-model="dialogDelete" max-width="500px">
-          <v-card>
-            <v-card-title class="text-p"
-              >Are you sure you want to delete this person?</v-card-title
-            >
-            <v-card-actions>
-              <v-spacer></v-spacer>
-              <v-btn color="blue-darken-1" variant="text" @click="closeDelete"
-                >Cancel</v-btn
-              >
-              <v-btn
-                color="blue-darken-1"
-                variant="text"
-                @click="deletePersonConfirm"
-                >OK</v-btn
-              >
-              <v-spacer></v-spacer>
-            </v-card-actions>
-          </v-card>
-        </v-dialog>
-      </v-card-title>
-      <v-data-table
-        :headers="headers"
-        :items="people"
-        :items-length="totalPeople"
-        :loading="loading"
-        :search="search"
-        item-value="name"
-        @update:options="loadPeople"
-      >
-        <template v-slot:item.actions="{ item }">
-          <v-icon class="me-2" size="small" @click="editPerson(item)">
-            mdi-pencil
-          </v-icon>
-          <v-icon size="small" @click="deletePerson(item)"> mdi-delete   </v-icon>
-        </template>
-  </v-data-table>
-      </v-card>
-    </v-container>
-  </template>
-  
+<style scoped>
+.v-card {
+  margin-bottom: 20px;
+}
+</style>

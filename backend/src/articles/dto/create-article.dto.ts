@@ -1,7 +1,7 @@
-import { IsMongoId, IsNotEmpty, IsString } from 'class-validator';
+import { IsMongoId, IsNotEmpty, IsOptional, IsString } from 'class-validator';
 
 export class CreateArticleDto {
-  @IsMongoId()
+  @IsString()
   user: string;
 
   @IsString()
@@ -13,6 +13,6 @@ export class CreateArticleDto {
 
   articleImage: string;
 
-  @IsString()
-  like: string;
+  @IsOptional()
+  like: number;
 }

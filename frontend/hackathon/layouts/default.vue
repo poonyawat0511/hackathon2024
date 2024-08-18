@@ -73,6 +73,7 @@ export default {
         { title: "News", icon: "mdi-newspaper", to: "/news" },
         { title: "Makeup", icon: "mdi-brush", to: "/makeup" },
         { title: "Lipstick", icon: "mdi-lipstick", to: "/lipstick" },
+        { title: "Products", icon: "mdi-product", to: "/products" },
       ],
     };
   },

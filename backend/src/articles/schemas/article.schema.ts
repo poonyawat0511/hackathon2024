@@ -6,8 +6,8 @@ export type ArticleDocument = HydratedDocument<Article>;
 
 @Schema()
 export class Article {
-  @Prop({ type: SchemaTypes.ObjectId, ref: 'User', required: true })
-  user: Types.ObjectId | User;
+  @Prop({ type: String, required: true })
+  user: string;
 
   @Prop({ type: String, required: true })
   name: string;
@@ -18,8 +18,8 @@ export class Article {
   @Prop({ type: String, required: true })
   articleImage: string;
 
-  @Prop({ type: String, required: true })
-  like: string;
+  @Prop({ type: Number, default: 0 })
+  like: number;
 }
 
 export const ArticleSchema = SchemaFactory.createForClass(Article);
